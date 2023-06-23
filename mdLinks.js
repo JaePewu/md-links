@@ -1,4 +1,7 @@
-const { isAbsoluteRoute } = require('./index.js');
+const { isAbsoluteRoute,
+    relativeToAbsolute,
+    isValidRoute,
+    fileOrDirectory } = require('./index.js');
 
 function mdLinks(route) {
     return isAbsoluteRoute(route)

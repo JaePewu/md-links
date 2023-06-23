@@ -1,6 +1,5 @@
 const path = require('path'); //path es un modulo de Node.js
 const fs = require('fs'); //file system lee los archivos, fs para usar funciones síncronas
-//const fsPromises = fs.promises; // promises para usar funciones asincronas
 const { promisify } = require('util');
 
 function isAbsoluteRoute(route) {
@@ -13,6 +12,7 @@ function isAbsoluteRoute(route) {
 // console.log(isAbsoluteRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'))
 
 
+
 /************** Funcion para transformar ruta relativa ***************/
 function relativeToAbsolute(route) {
   try {
@@ -22,6 +22,7 @@ function relativeToAbsolute(route) {
   }
 }
 // console.log(relativeToAbsolute('README.md'));
+
 
 /****** Funcion para Validar ruta ******/
 function isValidRoute(route) {
@@ -39,6 +40,8 @@ function isValidRoute(route) {
 // console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
 // console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\LD')); //false
   
+
+
 /********* funtion para saber si es un archivo o un directorio ***********/
 function fileOrDirectory(route) { // 
   try {
@@ -56,31 +59,27 @@ function fileOrDirectory(route) { //
         console.log('Error: Archivo/directorio roto o no encontrado', error); 
   }
 }
-// console.log(fileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
-// console.log(fileOrDirectory('https://nodejs.dev/learn/an-introduction-to-the-npm-package-manager'));
-// console.log(fileOrDirectory('S:\\'));
+  // console.log(fileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
+  // console.log(fileOrDirectory('https://nodejs.dev/learn/an-introduction-to-the-npm-package-manager'));
+  // console.log(fileOrDirectory('C:\\'));
 
-/*********** Funcion para sacra los archivos del directorio ****************/
-function getFilesInDirectory(directoryRoute) {// promisify es una funcion de modulo util, convierte en una funcion callback a funcion que devulve una promesa
-  const readdir = promisify(fs.readdir);
-  return readdir(directoryRoute)
-  .then(files => {
-    console.log(files)
-    files.forEach(file => {
-        console.log(file);
-    });
-  })
-  .catch(error => {
-    console.log('Error al obtener los archivos:', error);
-  });
+
+
+/*********** Funcion para sacar los archivos del directorio ****************/
+function getFilesInDirectory(directoryRoute) {
+  try {
+    return fs.readdirSync(directoryRoute);
+  } catch (error) {
+    console.log('Error: ', error);
+  }
 }
-// console.log(getFilesInDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria'));// devuelve los archivos
-console.log(getFilesInDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
+console.log(getFilesInDirectory('C:\\Users\\onesw\\OneDrive\Escritorio\\Laboratoria\\MD L\\md-links'));// devuelve los archivos
+// console.log(getFilesInDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
 
 module.exports = {
-  isAbsoluteRoute,
-  relativeToAbsolute,
-  isValidRoute,
-  fileOrDirectory
+      isAbsoluteRoute,
+      relativeToAbsolute,
+      isValidRoute,
+      fileOrDirectory
 
 };
