@@ -1,6 +1,6 @@
 const path = require('path'); //path es un modulo de Node.js
 const fs = require('fs'); //file system lee los archivos, fs para usar funciones síncronas
-const { log } = require('console');// funcion log de node.js, los mensajes se imprimirán en la consola estándar cuando se ejecute tu programa
+const { log, clear } = require('console');// funcion log de node.js, los mensajes se imprimirán en la consola estándar cuando se ejecute tu programa
 
 function isAbsoluteRoute(route) {
   try {
@@ -26,22 +26,21 @@ function relativeToAbsolute(route) {
 /****** Funcion para Validar ruta ******/
 function isValidRoute(route) {
   try {
-    const isAbsolute = isAbsoluteRoute(route);
-    const isRelative = relativeToAbsolute(route);
-    const resolvedRoute = isAbsolute ? route : isRelative;
-    fs.accessSync(resolvedRoute); // Verificar la existencia del archivo o directorio
-    console.log(resolvedRoute);
+    // const isAbsolute = isAbsoluteRoute(route);
+    // const isRelative = relativeToAbsolute(route);
+    // const resolvedRoute = isAbsolute ? route : isRelative;
+    fs.accessSync(route); // Verificar la existencia del archivo o directorio
     return true;
   } catch (error) {
-    log('Error:', error);
+    console.log('Error:', error);
     return false;
   }
 }
-  console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
-// console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\LD')); //false
+  //console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
+  //console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\LD')); //false
   
 
-
+ 
 /********* funtion para saber si es un archivo o un directorio ***********/
 function fileOrDirectory(route) { // 
   try {
@@ -57,7 +56,7 @@ function fileOrDirectory(route) { //
         log('Error: Archivo/directorio roto o no encontrado', error); 
   }
 }
-   // console.log(fileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
+  // console.log(fileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
   // console.log(fileOrDirectory('https://nodejs.dev/learn/an-introduction-to-the-npm-package-manager'));
     // console.log(fileOrDirectory('C:\\'));
 
@@ -89,7 +88,7 @@ function isMarkdown(route) {
 
 
 /***********   Funcion para leer archivos   ********/
-function readContent(route) {
+function readFile(route) {
   return new Promise((resolve, reject) => {
     fs.readFile(route, 'utf8', (error, content) => {
             if (error) return reject(error);
@@ -98,15 +97,24 @@ function readContent(route) {
   })
   .then ((content) => {
     log('Muestra el contenido del archivo', content);
+    // const links = getLinks(content);
+    // log('Enlaces encontrados:', links);
   })
   .catch ((error) => {
-    log('Error al leer el archivo: ', error);
+    log('Error al leer el archivo ', error);
   });
 }
 
-// console.log(readContent('C:\\'));
-// console.log(readContent('\C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
+// console.log(readFile('C:\\'));
+//console.log(readFile('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\archivosDeEjemplo\\jae.md'));
+//console.log(readFile('c:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
 
+
+/**************** Funcion para extraer los LINKS   ************ */
+function getLinks(content){
+  const links = content.match(/https?:\/\/\S*/g);// match devuelve todas las expresionesregulares entregadas como parametros
+  return links;
+}
 
 // module.exports = {
 //   isAbsoluteRoute,
