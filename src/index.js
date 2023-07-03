@@ -42,17 +42,18 @@ function isValidRoute(route) {
   //console.log(isValidRoute('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\LD')); //false
   
 
- 
 /********* funtion para saber si es un archivo o un directorio ***********/
-function fileOrDirectory(route) { // 
+function fileOrDirectory(route) { // cambiar NOMBRE
   try {
   const inspectRoute = path.resolve(route);
   const stats = fs.statSync(inspectRoute); // Obtener información sobre el archivo o directorio especificado (inspectRoute)
    // devuelve un objeto stats, contiene detalles sobre el archivo o directorio.
   if (stats.isFile()) { // comprueba si es un archivo
-    return 'Es un Archivo';
+    log('Es un Archivo');
+    return true;
   }else{
-    return 'Es un Directorio';
+    log('Es un Directorio');
+    return false;
   }
     } catch (error) {
         log('Error: Archivo/directorio roto o no encontrado', error); 
@@ -64,17 +65,17 @@ function fileOrDirectory(route) { //
 
 
 
-/*********** Funcion para sacar los archivos del directorio ****************/
-function getFilesInDirectory(directoryRoute) {
+/*********** Funcion para leer el directorio ****************/
+function readDirectory(directoryRoute) {
   try {
     return fs.readdirSync(directoryRoute);
   } catch (error) {
     log('Error: No se encuentran archivos ', error);
   }
 }
-// console.log(getFilesInDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\JAESSTORE PROJECT\\jaesStore'));// devuelve los archivos
-// console.log(getFilesInDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
-// console.log(getFilesInDirectory('C:\\'));
+console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\JAESSTORE PROJECT\\jaesStore'));// devuelve los archivos
+// console.log(readDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
+// console.log(readDirectory('C:\\'));
 
 
 /* *********     funcion para extencion .md    ******************/
@@ -143,7 +144,7 @@ module.exports = {
   relativeToAbsolute,
   isValidRoute,
   fileOrDirectory,
-  getFilesInDirectory,
+  readDirectory,
   isMarkdown,
   readFile,
   getLinks,
