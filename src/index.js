@@ -67,12 +67,36 @@ function fileOrDirectory(route) { // cambiar NOMBRE
 
 /*********** Funcion para leer el directorio ****************/
 function readDirectory(directoryRoute) {
+  let files = []; // Arreglo para almacenar los archivos encontrados
+
   try {
-    return fs.readdirSync(directoryRoute);
+    const items = fs.readdirSync(directoryRoute); // Obtiene los elementos del directorio
+    items.forEach((item) => {
+      const itemPath = directoryRoute + '/' + item; // Ruta completa del elemento
+      const stats = fs.statSync(itemPath); // Obtiene información sobre el elemento
+
+      if (stats.isDirectory()) {
+        // Si es una carpeta
+        files = files.concat(readDirectory(itemPath)); // Llamada recursiva para analizar subcarpetas 
+        //Se utiliza concat para combinar esos archivos con los archivos ya encontrados
+      } else {
+        // Si es un archivo
+        files.push(item); // Agrega el archivo al arreglo de archivos
+      }
+    });
   } catch (error) {
-    log('Error: No se encuentran archivos ', error);
+    log('Error: No se encuentran archivos', error); // Muestra un mensaje de error en caso de fallo
   }
+
+  return files; // Retorna el arreglo con los archivos encontrados
 }
+// function readDirectory(directoryRoute) {
+//   try {
+//     return fs.readdirSync(directoryRoute);
+//   } catch (error) {
+//     log('Error: No se encuentran archivos ', error);
+//   }
+// }
 console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\JAESSTORE PROJECT\\jaesStore'));// devuelve los archivos
 // console.log(readDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
 // console.log(readDirectory('C:\\'));
