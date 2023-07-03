@@ -126,9 +126,12 @@ function validateLinks(url) {
       // Verificar si el código de estado de la respuesta es 200 (OK)
       return { isValid, status: response.status }; // Devolver el estado de validez y el código de estado de la respuesta
     })
-    .catch((error) => {
-       // Capturar cualquier error que ocurra durante la solicitud y retornar false
-      return false;
+    .catch((error) => {// Capturar cualquier error que ocurra durante la solicitud y retornar false
+      if (error.response) {
+        return { isValid: false, status: error.response.status }; // Devolver el estado de validez y el código de estado del error de respuesta
+      } else {
+        return { isValid: false, error: error.message }; // Devolver el estado de validez y el mensaje de error
+      }
     });
 }
 // console.log(validateLinks('https://bluuweb.github.io/node/01-fundamentos/#npm-node-package-manager'));
