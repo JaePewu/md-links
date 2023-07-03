@@ -1,6 +1,8 @@
 const path = require('path'); //path es un modulo de Node.js
 const fs = require('fs'); //file system lee los archivos, fs para usar funciones síncronas
-const { log, clear } = require('console');// funcion log de node.js, los mensajes se imprimirán en la consola estándar cuando se ejecute tu programa
+const { log } = require('console');// funcion log de node.js, los mensajes se imprimirán en la consola estándar cuando se ejecute tu programa
+const axios = require('axios')
+
 
 function isAbsoluteRoute(route) {
   try {
@@ -116,12 +118,31 @@ function getLinks(content){
   return links;
 }
 
-// module.exports = {
-//   isAbsoluteRoute,
-//   relativeToAbsolute,
-//   isValidRoute,
-//   fileOrDirectory,
-//   getFilesInDirectory,
-//   isMarkdown,
-//   readContent
-// };
+/**************** Funcion para verificar links   ************ */
+function validateLinks(url) {
+  return axios.get(url) // Realizar una solicitud GET a la URL utilizando axios
+    .then((response) => {
+      const isValid = response.status === 200;
+      // Verificar si el código de estado de la respuesta es 200 (OK)
+      return { isValid, status: response.status }; // Devolver el estado de validez y el código de estado de la respuesta
+    })
+    .catch((error) => {
+       // Capturar cualquier error que ocurra durante la solicitud y retornar false
+      return false;
+    });
+}
+// console.log(validateLinks('https://bluuweb.github.io/node/01-fundamentos/#npm-node-package-manager'));
+// console.log(validateLinks('https://nodejs.dev/learn/the-package-json-guide'));
+
+
+module.exports = {
+  isAbsoluteRoute,
+  relativeToAbsolute,
+  isValidRoute,
+  fileOrDirectory,
+  getFilesInDirectory,
+  isMarkdown,
+  readFile,
+  getLinks,
+  validateLinks
+};
