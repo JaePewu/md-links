@@ -1,7 +1,7 @@
 const path = require('path'); //path es un modulo de Node.js
 const fs = require('fs'); //file system lee los archivos, fs para usar funciones síncronas
 const { log } = require('console');// funcion log de node.js, los mensajes se imprimirán en la consola estándar cuando se ejecute tu programa
-const axios = require('axios')
+const axios = require('axios');
 
 
 function isAbsoluteRoute(route) {
@@ -28,9 +28,6 @@ function relativeToAbsolute(route) {
 /****** Funcion para Validar ruta ******/
 function isValidRoute(route) {
   try {
-    // const isAbsolute = isAbsoluteRoute(route);
-    // const isRelative = relativeToAbsolute(route);
-    // const resolvedRoute = isAbsolute ? route : isRelative;
     fs.accessSync(route); // Verificar la existencia del archivo o directorio
     return true;
   } catch (error) {
@@ -43,7 +40,7 @@ function isValidRoute(route) {
   
 
 /********* funtion para saber si es un archivo o un directorio ***********/
-function fileOrDirectory(route) { // cambiar NOMBRE
+function isFileOrDirectory(route) { // cambiar NOMBRE
   try {
   const inspectRoute = path.resolve(route);
   const stats = fs.statSync(inspectRoute); // Obtener información sobre el archivo o directorio especificado (inspectRoute)
@@ -59,9 +56,9 @@ function fileOrDirectory(route) { // cambiar NOMBRE
         log('Error: Archivo/directorio roto o no encontrado', error); 
   }
 }
-  // console.log(fileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
-  // console.log(fileOrDirectory('https://nodejs.dev/learn/an-introduction-to-the-npm-package-manager'));
-    // console.log(fileOrDirectory('C:\\'));
+  // console.log(isFileOrDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
+  // console.log(isFileOrDirectory('https://nodejs.dev/learn/an-introduction-to-the-npm-package-manager'));
+    // console.log(isFileOrDirectory('C:\\'));
 
 
 
@@ -69,27 +66,37 @@ function fileOrDirectory(route) { // cambiar NOMBRE
 function readDirectory(directoryRoute) {
   let files = []; // Arreglo para almacenar los archivos encontrados
 
-  try {
+  try { // se intenta obtener los elementos del directorio
     const items = fs.readdirSync(directoryRoute); // Obtiene los elementos del directorio
-    items.forEach((item) => {
-      const itemPath = directoryRoute + '/' + item; // Ruta completa del elemento
-      const stats = fs.statSync(itemPath); // Obtiene información sobre el elemento
 
-      if (stats.isDirectory()) {
-        // Si es una carpeta
+    if (items.length === 0) { // Verificar si no hay archivos en el directorio
+            throw new Error('No se encuentran archivos en el directorio');
+          }
+
+    items.forEach((item) => { // Recorre cada elemento del directorio
+      const itemPath = directoryRoute + '/' + item; // Obtiene la ruta completa del elemento
+      console.log(itemPath + " ESTO TE DA MIJA");
+      
+      const stats = fs.statSync(itemPath); // Obtiene información sobre el elemento (archivo o directorio)
+
+      if (stats.isDirectory()) {  // Verificar si el elemento es un directorio (o una carpeta)
+        
         files = files.concat(readDirectory(itemPath)); // Llamada recursiva para analizar subcarpetas 
         //Se utiliza concat para combinar esos archivos con los archivos ya encontrados
       } else {
         // Si es un archivo
-        files.push(item); // Agrega el archivo al arreglo de archivos
+        files.push(item); // Agrega el archivo al arreglo de archivos (lista de archivos)
       }
     });
-  } catch (error) {
-    log('Error: No se encuentran archivos', error); // Muestra un mensaje de error en caso de fallo
-  }
-
   return files; // Retorna el arreglo con los archivos encontrados
+
+  } catch (error) {
+
+    return 'Error: ' + error.message, error ; // Retorna un mensaje de error en caso de fallo
+  }
 }
+
+
 // function readDirectory(directoryRoute) {
 //   try {
 //     return fs.readdirSync(directoryRoute);
@@ -97,9 +104,11 @@ function readDirectory(directoryRoute) {
 //     log('Error: No se encuentran archivos ', error);
 //   }
 // }
-console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\JAESSTORE PROJECT\\jaesStore'));// devuelve los archivos
+
+//console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\JAESSTORE PROJECT\\jaesStore'));// devuelve los archivos
 // console.log(readDirectory('https://github.com/JaePewu/md-links#10-achicando-el-problema'));
-// console.log(readDirectory('C:\\'));
+//console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\archivosDeEjemplo' ));
+// console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\archivosDeEjemplo\\Carpeta-Vacia'));
 
 
 /* *********     funcion para extencion .md    ******************/
@@ -108,7 +117,7 @@ function isMarkdown(route) {
     const extension = path.extname(route); // extname para obtener la extensión del archivo en la ruta especificada
     return extension.toLowerCase() === '.md'; // se compara si la extensión convertida a minúsculas es igual a ".md"
     } catch (error) {
-    console.log('Error: ', error);
+    console.log('Error: No es un archivo con extensión .md ', error);
     }
 }
  //  console.log(isMarkdown('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
@@ -124,8 +133,8 @@ function readFile(route) {
   })
   .then ((content) => {
     log('Muestra el contenido del archivo', content);
-    // const links = getLinks(content);
-    // log('Enlaces encontrados:', links);
+  const links = getLinks(route, content);
+    log('Enlaces encontrados:', links);
   })
   .catch ((error) => {
     log('Error al leer el archivo ', error);
@@ -138,8 +147,15 @@ function readFile(route) {
 
 
 /**************** Funcion para extraer los LINKS   ************ */
-function getLinks(content){
-  const links = content.match(/https?:\/\/\S*/g);// match devuelve todas las expresionesregulares entregadas como parametros
+function getLinks(route, content) {
+  const regex = content.matchAll(/\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g);
+  const results = [...regex]; // convertimos regex en array ('...'  Spread Operator)
+  const links = results.map((result) => ({  // MAP para iterar a través de los elementos dentro de un arreglo
+    text : result[1],
+    href: result[2],
+    file: route
+    }))
+
   return links;
 }
 
@@ -147,10 +163,10 @@ function getLinks(content){
 function validateLinks(url) {
   return axios.get(url) // Realizar una solicitud GET a la URL utilizando axios
     .then((response) => {
-      const isValid = response.status === 200;
-      // Verificar si el código de estado de la respuesta es 200 (OK)
-      return { isValid, status: response.status }; // Devolver el estado de validez y el código de estado de la respuesta
-    })
+      const isValid = response.status;
+      const statusText = response.statusText;
+      return { isValid, status: response.status, message: statusText}; // Devolver el estado de validez y el código de estado de la respuesta
+    })// ver isValid
     .catch((error) => {// Capturar cualquier error que ocurra durante la solicitud y retornar false
       if (error.response) {
         return { isValid: false, status: error.response.status }; // Devolver el estado de validez y el código de estado del error de respuesta
@@ -167,7 +183,7 @@ module.exports = {
   isAbsoluteRoute,
   relativeToAbsolute,
   isValidRoute,
-  fileOrDirectory,
+  isFileOrDirectory,
   readDirectory,
   isMarkdown,
   readFile,

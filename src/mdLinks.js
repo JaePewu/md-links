@@ -1,11 +1,13 @@
 const { isAbsoluteRoute,
     relativeToAbsolute,
     isValidRoute,
-    fileOrDirectory } = require('./index.js');
+    isFileOrDirectory, 
+    readDirectory} = require('./index.js');
 
 function mdLinks(path) {
+
     if (isAbsoluteRoute(path) !== true){
-        path = relativeToAbsolute(path);
+    path = relativeToAbsolute(path);
     }
 
     if (isValidRoute(path) !== true) {
@@ -13,11 +15,20 @@ function mdLinks(path) {
         return;
     }
 
+    if (isFileOrDirectory(path) !== true) {
+        path = readDirectory(path)
+    }
 
-    fileOrDirectory();
-
+ // Devolver la matriz de objetos
+return path.map((filePath) => {
+    return {
+    file: filePath,
+      // Otras propiedades que desees agregar
+    };
+});
     //return matriz=[{},{}]
 
 }
 
 //console.log(mdLinks('C:/Users/onesw/OneDrive/Escritorio/Laboratoria/MD L/md-links/README.md'));
+console.log(mdLinks('archivosDeEjemplo'));
