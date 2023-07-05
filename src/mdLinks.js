@@ -1,8 +1,12 @@
 const { isAbsoluteRoute,
     relativeToAbsolute,
     isValidRoute,
-    isFileOrDirectory, 
-    readDirectory} = require('./index.js');
+    isFileInRoute, 
+    readDirectory,
+    isMarkdown,
+    readFile,
+    getLinks,
+    validateLinks} = require('./index.js');
 
 function mdLinks(path) {
 
@@ -15,15 +19,22 @@ function mdLinks(path) {
         return;
     }
 
-    if (isFileOrDirectory(path) !== true) {
-        path = readDirectory(path)
+    if ( isFileInRoute(path) !== true) {
+        path = readDirectory(path);
     }
 
- // Devolver la matriz de objetos
+    // if (isMarkdown(path) === true) {
+    //     const content = readFile(path);
+    //     return getLinks(path, content);
+    // }
+
+    // if () {
+        
+    // }
+
 return path.map((filePath) => {
     return {
     file: filePath,
-      // Otras propiedades que desees agregar
     };
 });
     //return matriz=[{},{}]
@@ -31,4 +42,4 @@ return path.map((filePath) => {
 }
 
 //console.log(mdLinks('C:/Users/onesw/OneDrive/Escritorio/Laboratoria/MD L/md-links/README.md'));
-console.log(mdLinks('archivosDeEjemplo'));
+//console.log(mdLinks('archivosDeEjemplo'));
