@@ -1,1 +1,64 @@
 Archivo de prueba no extension '.md'
+
+const mdLinks = (path, options) => {
+    if (!isAbsoluteRoute(path)) {
+        path = relativeToAbsolute(path);
+    }
+
+    if (!isValidRoute(path)) {
+      // Error: La ruta no es válida
+        return;
+    }
+
+    if (isFileInRoute(path)) {
+        const content = readFile(path);
+        const links = getLinks(path, content);
+        if (options && options.validate) {
+        const linkPromises = links.map((link) => {
+            return validateLinks(link.href)
+            .then((response) => {
+                link.status = response.status;
+                link.ok = response.message === "OK" ? "ok" : "fail";
+                return link;
+            })
+            .catch((error) => {
+                link.status = error.status;
+                link.ok = "fail";
+                return link;
+            });
+        });
+        return Promise.all(linkPromises);
+        }
+        return links;
+    } else {
+        const files = readDirectory(path);
+        if (options && options.validate) {
+        const linkPromises = files.map((filePath) => {
+            const content = readFile(filePath);
+            const links = getLinks(filePath, content);
+            const linkPromises = links.map((link) => {
+            return validateLinks(link.href)
+                .then((response) => {
+                link.status = response.status;
+                link.ok = response.message === "OK" ? "ok" : "fail";
+                return link;
+                })
+                .catch((error) => {
+                link.status = error.status;
+                link.ok = "fail";
+                return link;
+                });
+            });
+            return Promise.all(linkPromises);
+        });
+        return Promise.all(linkPromises).then((results) => {
+            return results.flat();
+        });
+        }
+        return files.map((filePath) => {
+        return {
+            file: filePath,
+        };
+        });
+    }
+    };
