@@ -81,7 +81,7 @@ const readDirectory = (directoryRoute) => {
 
   return files; // Retorna el arreglo con los archivos encontrados
 };
-// console.log(readDirectory('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L'));
+
 
 /* *********     funcion para extencion .md    ******************/
 const isMarkdown = (route) => {
@@ -104,11 +104,9 @@ const readFile = (route) =>{
   })
   .then ((content) => {
     log('Muestra el contenido del archivo', content);// Imprime el contenido del archivo si la promesa se resuelve
-    // const links = getLinks(route, content);
-    // log('Enlaces encontrados:', links);
   })
   .catch ((error) => {
-    log('Error al leer el archivo ', error);// Imprime un mensaje de error si la promesa es rechazada
+    throw new Error('Error al leer el archivo ', error);// Imprime un mensaje de error si la promesa es rechazada
   });
 }
 
@@ -123,77 +121,85 @@ const getLinks = (route, content) => {
   const links = results.map((result) => ({  // MAP para iterar a través de los elementos dentro de un arreglo
     
     text : result[1], // - `text`: el texto del enlace encontrado (capturado por el grupo 1 en la expresión regular)
-
     href: result[2],    // - `href`: la URL del enlace encontrado (capturada por el grupo 2 en la expresión regular)
-
     file: route    // - `file`: la ruta del archivo `route` proporcionada como parámetro
-
     }))
 
   return links;
 }
 
 /**************** Funcion para verificar links   ************ */
-const validateLinks = (links) => {
+const validateLinks = (links, validate) => {
   return new Promise((resolve, reject) => {
-    axios.get(links)
-      .then((response) => {
-        const status = response.status; // Estado de la respuesta HTTP
-        // Determinar el estado del enlace según el código de estado de la respuesta
-        const statusText = response.statusText; //
+     // Crear un array de promesas para cada enlace
+    const linkPromises = links.map(link => {
+      // Validar el enlace si validate es true
+      if (validate) {
+        // Validar el enlace si validate es true
+        return axios.get(link.href)// Realizar una solicitud HTTP al enlace
+          .then(response => {
+            // Crear un objeto con la información del enlace y el estado de respuesta
+            return {
+              href: link.href,
+              text: link.text,
+              file: link.file,
+              status: response.status,
+              ok: response.statusText
+            };
+          })
+          .catch(error => {
+            // Capturar el error de la solicitud y crear un objeto con el estado de error correspondiente
+            return {
+              href: link.href,
+              text: link.text,
+              file: link.file,
+              status: error.response ? error.response.status : null,// Asigna el código de estado HTTP si está disponible en la respuesta de error, de lo contrario, asigna null
+              ok: 'fail'
+            };
+          });
+      } else {
+         // No validar el enlace, crear un objeto básico con la información del enlace
+        return Promise.resolve({
+          href: link.href,
+          text: link.text,
+          file: link.file
+        });
+      }
+    });
 
-        console.log( status, statusText);
-        resolve({ status: status, message: statusText }); // Resolver la promesa con el estado del enlace
+    Promise.all(linkPromises)// Esperar a que todas las promesas se resuelvan
+      .then(formattedLinks => {
+         // Resolver la promesa externa con la matriz de enlaces formateados
+        resolve(formattedLinks);
       })
-      .catch((error) => {
-        const status = error.response.status; // Estado de la respuesta HTTP en caso de error
-        const statusText = error.response.statusText; // Mensaje de estado en caso de error
-
-        reject({ status, statusText, error }); // Rechazar la promesa con el estado del enlace y el error
+      .catch(error => {
+        // Rechazar la promesa externa con el error correspondiente
+        reject(error);
       });
   });
 };
 
-   // console.log(validateLinks('https://curriculum.laboratoria.la/es/topics/javascript/arrays/array-proto')); // bueno
-  // console.log(validateLinks('https://nodejs.dev/learn/the-package-json-guide')); // malo
+// Ejemplo de uso de la función validateLinks
+/*const links = [
+  { href: 'https://www.google.com', text: 'Google', file: '/path/to/file.md' },
+  { href: 'https://www.example.com', text: 'Example', file: '/path/to/file.md' }
+];
 
-  /**---------------- Funcion para tomar lo que necesito de los links validados     --------------------- */
-  const getFormattedLinks = (links, validate) => {
-    return Promise.all( //dentro de Promise.all, se realiza un mapeo de cada enlace en links utilizando el método map
-      links.map(link => {
-        if (validate) {
-          // Validar el enlace si validate es true
-          return validateLinks(link.href)
-            .then(({ status, message }) => ({// => ({ ... }): Define una función de flecha que retorna un nuevo objeto. El objeto resultante es el objeto formateado con las propiedades deseadas.
-              // ({ status, message }): Utiliza la desestructuración de objetos para extraer las 
-              //propiedades status y message del objeto pasado como argumento
-              href: link.href,
-              text: link.text,
-              file: link.file,
-              status: status,
-              message: message,
-              ok: status >= 200 && status < 400 ? "OK" : "Fail"
-              //si el código de respuesta está en el rango 200-399, se establece como "OK"; de lo contrario, se establece como "Fail".
-            }))
-            .catch(error => ({
-              // Capturar el error de validación y crear el objeto con el enlace y el estado de error
-              href: link.href,
-              text: link.text,
-              file: link.file,
-              status: error.status,
-              ok: "Fail"
-            }));
-        } else {
-          // No validar el enlace, solo crear el objeto básico con la información del enlace
-          return Promise.resolve({
-            href: link.href,
-            text: link.text,
-            file: link.file
-          });
-        }
-      })
-    );
-  };
+validateLinks(links, false)
+  .then(formattedLinks => {
+    console.log(formattedLinks);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+  validateLinks(links, true)
+  .then(validatedLinks => {
+    console.log(validatedLinks);
+  })
+  .catch(error => {
+    console.error(error);
+  });*/
 
 module.exports = {
   isAbsoluteRoute,
@@ -205,5 +211,4 @@ module.exports = {
   readFile,
   getLinks,
   validateLinks,
-  getFormattedLinks
 };
