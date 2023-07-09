@@ -1,5 +1,6 @@
 const mdLinks = require('../src/mdLinks');
 
+
 const route = 'mock-archivosDeEjemplo/mock-jae.md';
 const options = { validate: true };
 
