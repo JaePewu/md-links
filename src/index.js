@@ -62,7 +62,7 @@ const readDirectory = (directoryRoute) => {
         files = files.concat(readDirectory(itemPath));// Llamada recursiva para analizar el subdirectorio y obtener los archivos
       } catch (error) {
         // Maneja el error si ocurre al leer el subdirectorio(carpeta dentro de carpeta)
-        console.error(`Error al leer el Directorio: ${itemPath}`, error);
+        throw new Error(`Error al leer el Directorio: ${itemPath}`, error);
       }
     } else if (isMarkdown(itemPath)) {// Verifica si el elemento es un archivo Markdown
       files.push(itemPath);// Agrega el archivo al arreglo de archivos encontrados

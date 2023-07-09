@@ -2,12 +2,11 @@ const mdLinks = require('../src/mdLinks');
 
 
 const route = 'mock-archivosDeEjemplo/mock-jae.md';
-const options = { validate: true };
 
 describe('mdLinks', () => {
     it('debería retornar una promesa que se resuelve con un array de objeto', (done) => {
         
-        const result = mdLinks(route, options);
+        const result = mdLinks(route, options = { validate: true });
 
         expect(result).resolves.toEqual([
             {
