@@ -31,9 +31,7 @@ const isValidRoute = (route) => {
 
 /********* funtion para saber si es un archivo o un directorio ***********/
 const isFileInRoute = (route) => {
-  const inspectRoute = path.resolve(route);
-  if (fs.existsSync(inspectRoute)) {
-    const stats = fs.statSync(inspectRoute);
+    const stats = fs.statSync(route);
     if (stats.isFile()) {
       log('Es un Archivo');
       return true;
@@ -41,16 +39,12 @@ const isFileInRoute = (route) => {
       log('Es un Directorio');
       return false;
     }
-  } else {
-    log('Error: Archivo/directorio roto o no encontrado');
-    return false;
-  }
 };
 
 
 /*********** Funcion para leer el directorio ****************/
 const readDirectory = (directoryRoute) => {
-  const files = [];
+  let files = [];
 
   const items = fs.readdirSync(directoryRoute);// Obtiene los elementos del directorio
 
@@ -65,19 +59,19 @@ const readDirectory = (directoryRoute) => {
 
     if (stats.isDirectory()) {// Verifica si el elemento es un directorio
       try {
-        files.push(readDirectory(itemPath));// Llamada recursiva para analizar el subdirectorio y obtener los archivos
+        files = files.concat(readDirectory(itemPath));// Llamada recursiva para analizar el subdirectorio y obtener los archivos
       } catch (error) {
         // Maneja el error si ocurre al leer el subdirectorio(carpeta dentro de carpeta)
         console.error(`Error al leer el Directorio: ${itemPath}`, error);
       }
-    } else if (path.extname(itemPath) === '.md') {// Verifica si el elemento es un archivo Markdown
+    } else if (isMarkdown(itemPath)) {// Verifica si el elemento es un archivo Markdown
       files.push(itemPath);// Agrega el archivo al arreglo de archivos encontrados
     }
   });
 
   if (files.length === 0) { // Verifica si no se encontraron archivos Markdown en el directorio
     throw new Error(`No se encontraron archivos Markdown en: ${directoryRoute}`);
-  }
+  }//"$" en ${directoryRoute} es una sintaxis de plantilla de cadena de JavaScript que se utiliza para insertar el valor
 
   return files; // Retorna el arreglo con los archivos encontrados
 };
@@ -87,7 +81,8 @@ const readDirectory = (directoryRoute) => {
 const isMarkdown = (route) => {
   const extension = path.extname(route); // Obtiene la extensión del archivo en la ruta especificada
   if (extension.toLowerCase() !== '.md') { // se compara si la extensión convertida a minúsculas es igual a ".md"
-    throw new Error('La extensión del archivo no es .md: ' + extension);
+    log('La extensión del archivo no es .md: ' + extension);
+    return false;
   }
 
   return true;
@@ -102,31 +97,26 @@ const readFile = (route) =>{
             return resolve(content);// Resuelve la promesa con el contenido del archivo
         })
   })
-  .then ((content) => {
-    log('Muestra el contenido del archivo', content);// Imprime el contenido del archivo si la promesa se resuelve
-  })
-  .catch ((error) => {
-    throw new Error('Error al leer el archivo ', error);// Imprime un mensaje de error si la promesa es rechazada
-  });
 }
-
-//console.log(readFile('C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\README.md'));
 
 
 /**************** Funcion para extraer los LINKS   ************ */
 const getLinks = (route, content) => {
-// La función `getLinks` recibe dos parámetros: `route` (ruta del archivo) y `content` (contenido del archivo)
-  const regex = content.matchAll(/\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g);  // Se utiliza `matchAll` en `content` con una expresión regular para encontrar todos los enlaces en formato [texto](url)
-  const results = [...regex];  // Se utiliza el operador spread (...) para convertir el iterador `regex` en un array
-  const links = results.map((result) => ({  // MAP para iterar a través de los elementos dentro de un arreglo
-    
-    text : result[1], // - `text`: el texto del enlace encontrado (capturado por el grupo 1 en la expresión regular)
-    href: result[2],    // - `href`: la URL del enlace encontrado (capturada por el grupo 2 en la expresión regular)
-    file: route    // - `file`: la ruta del archivo `route` proporcionada como parámetro
-    }))
+  // La función `getLinks` recibe dos parámetros: `route` (ruta del archivo) y `content` (contenido del archivo)
+  const regex = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g;
+  const results = Array.from(content.matchAll(regex)).map((result) => ({
+  /* "Array.from" se utiliza para convertir directamente el resultado de "matchAll" en un array. Esto garantiza que 
+  se recorran todas las coincidencias antes de aplicar map para extraer el texto y la URL de cada enlace.*/
+  // Se utiliza `matchAll` en `content` con una expresión regular para encontrar todos los enlaces en formato [texto](url)
 
-  return links;
-}
+    text: result[1], // - `text`: el texto del enlace encontrado (capturado por el grupo 1 en la expresión regular)
+    href: result[2], // - `href`: la URL del enlace encontrado (capturada por el grupo 2 en la expresión regular)
+    file: route      //la ruta del archivo `route` proporcionada como parámetro
+  }));
+
+  return results;
+};
+
 
 /**************** Funcion para verificar links   ************ */
 const validateLinks = (links, validate) => {
@@ -136,7 +126,7 @@ const validateLinks = (links, validate) => {
       // Validar el enlace si validate es true
       if (validate) {
         // Validar el enlace si validate es true
-        return axios.get(link.href)// Realizar una solicitud HTTP al enlace
+        return axios.get(link.href)// Realizar una solicitud HTTP al enlace .get devuelve una promesa
           .then(response => {
             // Crear un objeto con la información del enlace y el estado de respuesta
             return {
@@ -179,27 +169,6 @@ const validateLinks = (links, validate) => {
   });
 };
 
-// Ejemplo de uso de la función validateLinks
-/*const links = [
-  { href: 'https://www.google.com', text: 'Google', file: '/path/to/file.md' },
-  { href: 'https://www.example.com', text: 'Example', file: '/path/to/file.md' }
-];
-
-validateLinks(links, false)
-  .then(formattedLinks => {
-    console.log(formattedLinks);
-  })
-  .catch(error => {
-    console.error(error);
-  });
-
-  validateLinks(links, true)
-  .then(validatedLinks => {
-    console.log(validatedLinks);
-  })
-  .catch(error => {
-    console.error(error);
-  });*/
 
 module.exports = {
   isAbsoluteRoute,
