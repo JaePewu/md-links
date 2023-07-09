@@ -75,13 +75,12 @@ const mdLinks = (path, options = {}) => {
     });
 };
 
-module.exports = {
-    mdLinks};
+module.exports = mdLinks;
 
-mdLinks('mock-archivosDeEjemplo\\noMD.txt', { validate: true })
-  .then(links => {
+mdLinks('mock-archivosDeEjemplo/mock-jae.md', { validate: true })
+    .then(links => {
     console.log(links);
-  })
-  .catch(error => {
+    })
+    .catch(error => {
     console.error(error);
-  });
+    });

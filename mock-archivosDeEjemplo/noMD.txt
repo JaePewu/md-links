@@ -62,3 +62,23 @@ const mdLinks = (path, options) => {
         });
     }
     };
+
+    // const mdLinks = require('../src/mdLinks');
+
+md-links.spec.js
+// const route = '/mock-archivosDeEjemplo/mock-jae.md';
+
+// describe('mdLinks', () => {
+//   it('debería retornar una promesa que se resuelve con un array de objeto', (done) => {
+//     const result = mdLinks(route, options= { validate: true });
+//     expect(result).resolves.toEqual([
+//       {
+//         href: 'https://github.com/Laboratoria/DEV006-md-links',
+//         text: 'README MD LINKS',
+//         file: 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\mock-jae.md',
+//         status: 200,
+//         ok: 'OK'
+//       },
+//     ]).then(done);
+//   });
+// });
