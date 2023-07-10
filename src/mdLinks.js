@@ -26,7 +26,7 @@ const mdLinks = (path, options = {}) => {
                 // Verificar si es un archivo Markdown
             readFile(path) // Leer el archivo
             .then((content) => {
-                console.log(content);
+                //console.log(content);
                 const links = getLinks(path, content); // Extraer los enlaces del contenido del archivo
                 
                 // if (options.validate) {
@@ -42,7 +42,7 @@ const mdLinks = (path, options = {}) => {
 
         } else {
             const files = readDirectory(path); // Leer el directorio y obtener los archivos Markdown
-        console.log(files);
+        //console.log(files);
             const promises = files.map((file) => {
                 return new Promise((resolve, reject) => {
 
@@ -74,7 +74,7 @@ const mdLinks = (path, options = {}) => {
 
 module.exports = mdLinks;
 
-// mdLinks('mock2', { validate: false })
+// mdLinks('mock-archivosDeEjemplo', { validate: true })
 //     .then(links => {
 //     console.log(links);
 //     })
