@@ -33,9 +33,7 @@ const mdLinks = (path, options = {}) => {
                 validateLinks(links, options.validate) // Validar los enlaces
                 .then((validatedLinks) => resolve(validatedLinks))
                 .catch((error) => reject(error));
-                // } else {
-                //     resolve(links);
-                // }
+                
             })
             .catch((error) => reject(error));
             } else {
@@ -43,7 +41,6 @@ const mdLinks = (path, options = {}) => {
             }
 
         } else {
-            // try {
             const files = readDirectory(path); // Leer el directorio y obtener los archivos Markdown
         console.log(files);
             const promises = files.map((file) => {
@@ -77,7 +74,7 @@ const mdLinks = (path, options = {}) => {
 
 module.exports = mdLinks;
 
-// mdLinks('mock-archivosDeEjemplo/mock-jae.md', { validate: true })
+// mdLinks('mock2', { validate: false })
 //     .then(links => {
 //     console.log(links);
 //     })

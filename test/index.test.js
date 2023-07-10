@@ -65,19 +65,19 @@ describe('isFileInRoute', () => {
 
 
 describe('readDirectory', () => {
-    // it('debería devolver un arreglo con los archivos encontrados en el directorio o lanzar un error si no se encuentran archivos', () => {
-    //     const directoryRouteWithFiles = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo';
-    //     const expectedFiles = ['mock-jae.md', 'Archivo-Vacio.md', 'algo.md']; // Suponiendo que estos son los archivos encontrados en el directorio
+    it('debería devolver un arreglo con los archivos encontrados en el directorio o lanzar un error si no se encuentran archivos', () => {
+        const directoryRouteWithFiles = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo';
+        const expectedFiles = ['algo.md', 'Archivo-Vacio.md', 'mock-jae.md', 'mock-mini.md']; 
     
-    //     const directoryRouteWithoutFiles = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\carpeta-vacia';
+        const directoryRouteWithoutFiles = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\carpeta-vacia';
     
-    //     const resultWithFiles = readDirectory(directoryRouteWithFiles);
-    //     expect(resultWithFiles).toEqual(expectedFiles);
+        const resultWithFiles = readDirectory(directoryRouteWithFiles);
+        expect(resultWithFiles).toEqual(expectedFiles);
     
-    //     expect(() => {
-    //     readDirectory(directoryRouteWithoutFiles);
-    //     }).toThrowError('No se encuentran archivos en el directorio');
-    // });
+        expect(() => {
+        readDirectory(directoryRouteWithoutFiles);
+        }).toThrowError('No se encuentran archivos en el directorio');
+    });
 
     
     it('debería lanzar un error si no se encuentran archivos en el directorio', () => {
