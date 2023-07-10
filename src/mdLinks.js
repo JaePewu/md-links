@@ -74,7 +74,7 @@ const mdLinks = (path, options = {}) => {
 
 module.exports = mdLinks;
 
-// mdLinks('mock-archivosDeEjemplo', { validate: true })
+// mdLinks('mock-archivosDeEjemplo\\mock-jae.md', { validate: true })
 //     .then(links => {
 //     console.log(links);
 //     })
