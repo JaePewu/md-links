@@ -132,7 +132,7 @@ Este proyecto es distinto a los que he trabajo hasta ahora dado que no hay una i
 web, todo se desarrolla en mi editor y terminal/consola.
 
 Es por ello que, para visualizar mejor lo que debía hacer
-y planificar, como recomendación no hicieron crear un
+y planificar, como recomendación nos hicieron crear un
 `diagrama de flujo`.
 
 ![Diagrama-de-Flujo](Diagrama_de_flujo-terminos.png)
@@ -142,7 +142,7 @@ y planificar, como recomendación no hicieron crear un
 
 ### GitHub Project
 
-Esta ves la planificación fue a traves de GitHub Project.
+Esta vez la planificación fue a través de GitHub Project.
 
 ![GitHub](GitHub_Project.png)
 

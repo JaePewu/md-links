@@ -74,10 +74,10 @@ const mdLinks = (path, options = {}) => {
 
 module.exports = mdLinks;
 
-// mdLinks('mock-archivosDeEjemplo\\mock-jae.md', { validate: true })
-//     .then(links => {
-//     console.log(links);
-//     })
-//     .catch(error => {
-//     console.error(error);
-//     });
+mdLinks('mock-archivosDeEjemplo\\mock-jae.md', { validate: false })
+    .then(links => {
+    console.log(links);
+    })
+    .catch(error => {
+    console.error(error);
+    });
