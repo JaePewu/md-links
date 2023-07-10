@@ -12,7 +12,7 @@ const relativeToAbsolute = (route) => {
   if (!path.isAbsolute(route)) {
     return path.resolve(route);
   }
-  throw new Error('Es una ruta relativa');
+  throw new Error('La ruta ya es absoluta');
 };
 
 
@@ -54,12 +54,14 @@ const readDirectory = (directoryRoute) => {
 
   items.forEach((item) => {// Recorre cada elemento del directorio
     const itemPath = path.join(directoryRoute, item); // Obtiene la ruta completa del elemento
-
     const stats = fs.statSync(itemPath); // Obtiene información sobre el elemento (archivo o directorio)
 
     if (stats.isDirectory()) {// Verifica si el elemento es un directorio
       try {
-        files = files.concat(readDirectory(itemPath));// Llamada recursiva para analizar el subdirectorio y obtener los archivos
+        const subFiles = readDirectory(itemPath); // Llamada recursiva para analizar las subcarpetas y obtener los archivos
+        if (subFiles.length > 0) {
+          files = files.concat(subFiles);
+        }
       } catch (error) {
         // Maneja el error si ocurre al leer el subdirectorio(carpeta dentro de carpeta)
         throw new Error(`Error al leer el Directorio: ${itemPath}`, error);

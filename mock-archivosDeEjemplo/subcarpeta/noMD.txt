@@ -109,3 +109,70 @@ describe('mdLinks', () => {
         ]).then(done); // Llama a "done" cuando la promesa se haya resuelto o rechazado
     });
 });
+
+
+*Test de readDirectory*
+
+describe('readDirectory', () => {
+    const readDirectory = (directoryRoute) => {
+            let files = [];
+      
+            const items = fs.readdirSync(directoryRoute);
+      
+            if (items.length === 0) {
+            throw new Error('No se encuentran archivos en el directorio');
+            }
+      
+            items.forEach((item) => {
+            const itemPath = path.join(directoryRoute, item);
+            const stats = fs.statSync(itemPath);
+      
+            if (stats.isDirectory()) {
+                try {
+                const subFiles = readDirectory(itemPath);
+                if (subFiles.length > 0) {
+                    files = files.concat(subFiles);
+                }
+                } catch (error) {
+                throw new Error(`Error al leer el Directorio: ${itemPath}`);
+                }
+            } else if (isMarkdown(itemPath)) {
+                files.push(itemPath);
+            }
+            });
+      
+            if (files.length === 0) {
+            throw new Error(`No se encontraron archivos Markdown en: ${directoryRoute}`);
+            }
+      
+            return files;
+        };
+      
+        it('debería devolver un arreglo con los archivos encontrados en el directorio', () => {
+            const directoryRoute = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo';
+            const expectedFiles = [
+            'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\mock-jae.md',
+            'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\Archivo-Vacio.md',
+            'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\algo.md'
+            ];
+    
+            const result = readDirectory(directoryRoute);
+            expect(result).toEqual(expectedFiles);
+        });
+    
+        it('debería lanzar un error si no se encuentran archivos en el directorio', () => {
+            const directoryRoute = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\carpeta-vacia';
+    
+            expect(() => {
+            readDirectory(directoryRoute);
+            }).toThrowError('No se encuentran archivos en el directorio');
+        });
+    
+        it('debería lanzar un error si no se encuentran archivos Markdown en el directorio', () => {
+            const directoryRoute = 'C:\\Users\\onesw\\OneDrive\\Escritorio\\Laboratoria\\MD L\\md-links\\mock-archivosDeEjemplo\\subcarpeta';
+    
+            expect(() => {
+            readDirectory(directoryRoute);
+            }).toThrow('No se encontraron archivos Markdown en: ' + directoryRoute);
+        });
+        });
