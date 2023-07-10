@@ -156,7 +156,7 @@ Esta vez la planificación fue a través de GitHub Project.
 
 ### Validación en FALSE
 
-![FALSE](Validacion_en-FALSE.png)
+![FALSE](Validacion_en_FALSE.png)
 
 ## 6. Paso a Paso del Proyecto
 
