@@ -43,41 +43,6 @@ const isFileInRoute = (route) => {
 
 
 /*********** Funcion para leer el directorio ****************/
-// const readDirectory = (directoryRoute) => {
-//   let files = [];
-
-//   const items = fs.readdirSync(directoryRoute);// Obtiene los elementos del directorio
-
-//   if (items.length === 0) {// Verifica si no hay archivos en el directorio
-//     throw new Error('No se encuentran archivos en el directorio');
-//   }
-
-//   items.forEach((item) => {// Recorre cada elemento del directorio
-//     const itemPath = path.join(directoryRoute, item); // Obtiene la ruta completa del elemento
-//     const stats = fs.statSync(itemPath); // Obtiene información sobre el elemento (archivo o directorio)
-
-//     if (stats.isDirectory()) {// Verifica si el elemento es un directorio
-//       try {
-//         const subFiles = readDirectory(itemPath); // Llamada recursiva para analizar las subcarpetas y obtener los archivos
-//         if (subFiles.length > 0) {
-//           files = files.concat(subFiles);
-//         }
-//       } catch (error) {
-//         // Maneja el error si ocurre al leer el subdirectorio(carpeta dentro de carpeta)
-//         throw new Error(`Error al leer el Directorio: ${itemPath}`, error);
-//       }
-//     } else if (isMarkdown(itemPath)) {// Verifica si el elemento es un archivo Markdown
-//       files.push(itemPath);// Agrega el archivo al arreglo de archivos encontrados
-//     }
-//   });
-
-//   if (files.length === 0) { // Verifica si no se encontraron archivos Markdown en el directorio
-//     throw new Error(`No se encontraron archivos Markdown en: ${directoryRoute}`);
-//   }//"$" en ${directoryRoute} es una sintaxis de plantilla de cadena de JavaScript que se utiliza para insertar el valor
-
-//   return files; // Retorna el arreglo con los archivos encontrados
-// };
-
 const readDirectory = (directoryRoute) => {
   let files = [];
 
