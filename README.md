@@ -135,8 +135,8 @@ Es por ello que, para visualizar mejor lo que debía hacer
 y planificar, como recomendación no hicieron crear un
 `diagrama de flujo`.
 
-![Diagrama-de-Flujo](Diagrama de flujo-terminos.png)
-![Diagrama](Diagrama de Flujo.png)
+![Diagrama-de-Flujo](Diagrama_de_flujo-terminos.png)
+![Diagrama](Diagrama_de_Flujo.png)
 
 ## 5. Planificación y testeo
 
@@ -144,11 +144,19 @@ y planificar, como recomendación no hicieron crear un
 
 Esta ves la planificación fue a traves de GitHub Project.
 
-![Diagrama-de-Flujo](Diagrama de flujo-terminos.png)
+![GitHub](GitHub_Project.png)
 
 ### Test
 
 ![Test](Test.png)
+
+### Validación en TRUE
+
+![TRUE](Validacion_en-TRUE.png)
+
+### Validación en FALSE
+
+![FALSE](Validacion_en-FALSE.png)
 
 ## 6. Paso a Paso del Proyecto
 
